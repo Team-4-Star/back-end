@@ -1,0 +1,14 @@
+# The node modules directory contains all dependent node packages. User's can install dependent packages themselves by executing "npm install".
+node_modules
+
+# The package-lock.json file is created when running npm install
+package-lock.json
+
+# The .env file contains all enviroment variables. The change with each enviroment so a user must set their own. Users can use the .env.template file as a template for their .env file.
+.env
+
+# The .DS_Store file contains directory settings on MacOS. This file is not part of the project.
+.DS_Store
+
+# The .vscode directory contains configuration files for Visual Studio Code
+.vscode
