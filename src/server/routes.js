@@ -144,23 +144,23 @@ const sendBadRequest = (req, res, err) => {
 export default (server) => {
 
     // Whenever this route is called, return a session's CSRF token
-    server.get("/auth/token", getCSRFToken)
+    server.get("/csrf-token", getCSRFToken)
 
     // Whenever this route is called, return whether a user is authenticated
-    server.get("/auth/authenticated", getAuthenticated)
+    server.get("/authenticated", getAuthenticated)
 
     // Whenever this route is called, create a new user
-    server.post("/auth/register", registerUser)
+    server.post("/register", registerUser)
 
     // Whenever this route is called, login a user
-    server.post("/auth/login", loginUser)
+    server.post("/login", loginUser)
 
     // Whenever this route is called, return all the commands
-    server.get("/api/commands", readAllCommands)
+    server.get("/commands", readAllCommands)
 
     // Whenever this route is called, return all the flashcards
-    server.get("/api/flashcards", readAllFlashcards)
+    server.get("/flashcards", readAllFlashcards)
 
     // Whenever this route is called, return all the flashcard categories
-    server.get("/api/flashcards/categories", readAllFlashcardCategories)
+    server.get("/flashcards/categories", readAllFlashcardCategories)
 }
