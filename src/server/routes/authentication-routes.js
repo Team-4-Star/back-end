@@ -124,12 +124,18 @@ const loginUser = async (req, res) => {
         return
     }
 
+    // Get's the user's role
+    query_options = [user_id]
+    database_response = await database_pool.query("SELECT role FROM users WHERE id = $1;", query_options)
+    const role = database_response.rows[0].role
+
     // Regenerates the session
     req.session.regenerate((err) => {
 
         // Sets session variables
         req.session.authenticated = true
         req.session.user_id = user_id
+        req.session.role = role
 
         // Sends success
         res.json({ message: "Success" })
