@@ -70,9 +70,6 @@ const registerUser = async (req, res) => {
         database_response = await database_pool.query("INSERT INTO users_flashcards (user_id, flashcard_id, status) VALUES ($1, $2, 'Needs studying') RETURNING *;", query_options)
     }
 
-    // Sends the commands
-    res.send(database_response.rows)
-
     // Logs the new user in
     loginUser(req, res)
 }
