@@ -28,6 +28,7 @@ export default (server) => {
     // Parses the body of any incoming requests and converts it into an object if the body is a JSON string
     server.use(json())
 
+    /*
     // Allows CORS with the same system and our deployed front-end
     server.use(cors({
         origin: (origin, callback) => {
@@ -39,6 +40,10 @@ export default (server) => {
             }
         }
     }))
+    */
+
+    // Allows CORS from anywhere
+    server.use(cors())
 
     // Applies a rate limiting of 500 requests per 1 minute window
     server.use(express_rate_limit({
