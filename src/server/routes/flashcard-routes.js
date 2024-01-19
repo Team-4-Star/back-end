@@ -4,6 +4,20 @@ import database_pool from "../../database/database.js"
 // Whenever this route is called, return all the flashcards
 const readAllFlashcards = async (req, res) => {
 
+    // If a user is authenticated, return their flashcards
+    if (req.session.authenticated) {
+        readAllUsersFlashcards()
+    }
+
+    // Otherwise, return public flashcards
+    else {
+        readAllPublicFlashcards()
+    }
+}
+
+// Whenever this route is called, return all the flashcards
+const readAllPublicFlashcards = async (req, res) => {
+
     // Queries the database for all the flashcards
     const database_response = await database_pool.query("SELECT * FROM flashcards ORDER BY id;")
 
@@ -15,6 +29,21 @@ const readAllFlashcards = async (req, res) => {
 
     // Sends the commands
     res.send(database_response.rows)
+}
+
+// Whenever this route is called, return all the user's flashcards
+const readAllUsersFlashcards = async (req, res) => {
+
+    // Verifies a user is authenticated
+    if (!req.session.authenticated) {
+        sendBadRequest(req, res, "User not authenticated.")
+        return
+    }
+
+    // Performs the query and returns the results to the client
+    const query_options = [req.session.user_id]
+    const database_response = await database_pool.query("SELECT * FROM users_flashcards WHERE user_id = $1;", query_options)
+    res.json(database_response.rows)
 }
 
 // Whenever this route is called, return all the flashcard categories

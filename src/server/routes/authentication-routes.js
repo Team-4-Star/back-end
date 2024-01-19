@@ -44,13 +44,28 @@ const registerUser = async (req, res) => {
     // Hashes the password
     const password_hash = bcrypt.hashSync(req.body.password, parseInt(process.env.salt_rounds))
 
-    // Inserts the user data into the database'
+    // Inserts the user data into the database
     query_options = [req.body.username, password_hash]
     database_response = await database_pool.query("INSERT INTO users (username, password_hash) VALUES ($1, $2) RETURNING *;", query_options)
     if (database_response.rowCount === 0) {
         sendBadRequest(req, res, "Unable to register account.")
         return
     }
+
+    // Get's the new user's id
+    const user_id = database_response.rows[0].id
+
+    // Queries the database for all the flashcards
+    database_response = await database_pool.query("SELECT * FROM flashcards ORDER BY id;")
+
+    // The pg module does not parse numerical values when returning a query response so this must be done manually
+    for (const flashcard of database_response.rows) {
+        query_options = [user_id, flashcard.id]
+        database_response = await database_pool.query("INSERT INTO users_flashcards (user_id, flashcard_id, status) VALUES ($1, $2, 'Needs studying') RETURNING *;", query_options)
+    }
+
+    // Sends the commands
+    res.send(database_response.rows)
 
     // Logs the new user in
     loginUser(req, res)
