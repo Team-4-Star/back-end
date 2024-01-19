@@ -24,17 +24,26 @@ const registerUser = async (req, res) => {
     if (req.body.username === undefined) {
         sendBadRequest(req, res, "No username provided.")
         return
+    } else if (typeof req.body.username !== "string") {
+        sendBadRequest(res, `Property 'username' should be of type string, received ${typeof req.body.username} instead`)
+        return
     }
 
     // Verifies the password was provided
     if (req.body.password === undefined) {
         sendBadRequest(req, res, "No password provided.")
         return
+    } else if (typeof req.body.password !== "string") {
+        sendBadRequest(res, `Property 'password' should be of type string, received ${typeof req.body.password} instead`)
+        return
     }
 
     // Verifies the role was provided
     if (req.body.role === undefined) {
         sendBadRequest(req, res, "No role provided.")
+        return
+    } else if (typeof req.body.role !== "string") {
+        sendBadRequest(res, `Property 'role' should be of type string, received ${typeof req.body.role} instead`)
         return
     }
 
@@ -81,11 +90,17 @@ const loginUser = async (req, res) => {
     if (req.body.username === undefined) {
         sendBadRequest(req, res, "No username provided.")
         return
+    } else if (typeof req.body.username !== "string") {
+        sendBadRequest(res, `Property 'username' should be of type string, received ${typeof req.body.username} instead`)
+        return
     }
 
     // Verifies the password was provided
     if (req.body.password === undefined) {
         sendBadRequest(req, res, "No password provided.")
+        return
+    } else if (typeof req.body.password !== "string") {
+        sendBadRequest(res, `Property 'password' should be of type string, received ${typeof req.body.password} instead`)
         return
     }
 

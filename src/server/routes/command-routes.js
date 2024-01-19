@@ -21,15 +21,21 @@ const createCommand = async (req, res) => {
         return
     }
 
-    // Verifies a command was passed
+    // Verifies a command was provided
     if (req.body.command === undefined) {
         sendBadRequest(req, res, "No command provided.")
+        return
+    } else if (typeof req.body.command !== "string") {
+        sendBadRequest(res, `Property 'command' should be of type string, received ${typeof req.body.command} instead`)
         return
     }
 
     // Verifies a description was passed
     if (req.body.description === undefined) {
         sendBadRequest(req, res, "No description provided.")
+        return
+    } else if (typeof req.body.description !== "string") {
+        sendBadRequest(res, `Property 'description' should be of type string, received ${typeof req.body.description} instead`)
         return
     }
 
