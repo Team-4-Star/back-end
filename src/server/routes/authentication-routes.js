@@ -77,6 +77,18 @@ const registerUser = async (req, res) => {
 // Whenever this route is called, login a user
 const loginUser = async (req, res) => {
 
+    // Verifies the username was provided
+    if (req.body.username === undefined) {
+        sendBadRequest(req, res, "No username provided.")
+        return
+    }
+
+    // Verifies the password was provided
+    if (req.body.password === undefined) {
+        sendBadRequest(req, res, "No password provided.")
+        return
+    }
+
     // Get's the user's id
     let query_options = [req.body.username]
     let database_response = await database_pool.query("SELECT id FROM users WHERE username = $1;", query_options)
