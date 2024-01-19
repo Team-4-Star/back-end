@@ -15,7 +15,7 @@ CREATE TABLE flashcard_categories (
 );
 CREATE TABLE flashcards (
     id BIGSERIAL NOT NULL PRIMARY KEY,
-    category_id BIGSERIAL REFERENCES flashcard_categories(id) NOT NULL,
+    category_id BIGSERIAL NOT NULL REFERENCES flashcard_categories(id) ON DELETE CASCADE,
     word TEXT NOT NULL,
     definition TEXT NOT NULL
 );
@@ -32,7 +32,7 @@ CREATE TABLE sessions (
 ) WITH (OIDS = FALSE);
 CREATE TABLE users_flashcards (
     id BIGSERIAL NOT NULL PRIMARY KEY,
-    user_id BIGSERIAL NOT NULL REFERENCES users(id),
-    flashcard_id BIGSERIAL NOT NULL REFERENCES flashcards(id),
+    user_id BIGSERIAL NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    flashcard_id BIGSERIAL NOT NULL REFERENCES flashcards(id) ON DELETE CASCADE,
     status TEXT NOT NULL
 );
