@@ -6,12 +6,12 @@ const readAllFlashcards = async (req, res) => {
 
     // If a user is authenticated, return their flashcards
     if (req.session.authenticated) {
-        readAllUsersFlashcards()
+        readAllUsersFlashcards(req, res)
     }
 
     // Otherwise, return public flashcards
     else {
-        readAllPublicFlashcards()
+        readAllPublicFlashcards(req, res)
     }
 }
 
