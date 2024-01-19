@@ -1,6 +1,74 @@
 // Imports our database pool object
 import database_pool from "../../database/database.js"
 
+// Imports our utility routes
+import { sendUnauthorized, sendForbidden, sendBadRequest, sendInternalServerError } from "./utility-routes.js"
+
+// Whenever this route is called, create a flashcard
+const createFlashcard = async (req, res) => {
+
+    // Verifies a user is logged in
+    if (!req.session.user_id) {
+        sendUnauthorized(req, res, "You must be logged in.")
+        return
+    }
+
+    // Verifies the user is an admin
+    let query_parameters = [req.session.user_id]
+    let database_response = await database_pool.query("SELECT * FROM users WHERE id = $1 AND role = 'admin' LIMIT 1;", query_parameters)
+    if (database_response.rowCount === 0) {
+        sendForbidden(req, res, "Insufficient permissions.")
+        return
+    }
+
+    // Verifies a word was provided
+    if (req.body.word === undefined) {
+        sendBadRequest(req, res, "No word provided.")
+        return
+    } else if (typeof req.body.word !== "string") {
+        sendBadRequest(res, `Property 'word' should be of type string, received ${typeof req.body.word} instead`)
+        return
+    }
+
+    // Verifies a definition was provided
+    if (req.body.definition === undefined) {
+        sendBadRequest(req, res, "No definition provided.")
+        return
+    } else if (typeof req.body.definition !== "string") {
+        sendBadRequest(res, `Property 'definition' should be of type string, received ${typeof req.body.definition} instead`)
+        return
+    }
+
+    // Verifies a category id was provided
+    if (req.body.category_id === undefined) {
+        sendBadRequest(req, res, "No category ID provided.")
+        return
+    } else if (typeof req.body.definition !== "number") {
+        sendBadRequest(res, `Property 'category_id' should be of type number, received ${typeof req.body.category_id} instead`)
+        return
+    }
+
+    // Verfies the category id is valid
+    query_parameters = [req.body.category_id]
+    database_response = await database_pool.query("SELECT * FROM flashcard_categories WHERE id = $1 LIMIT 1;", query_parameters)
+    if (database_response.rowCount === 0) {
+        sendBadRequest(req, res, `No flashcard cateogry exists with ID ${req.body.category_id}`)
+        return
+    }
+
+    // Creates the flashcard
+    query_parameters = [req.body.word, req.body.definition, req.body.category_id]
+    database_response = await database_pool.query("INSERT INTO flashcards (word, definition, category_id) VALUES ($1,$2,$3) RETURNING *;", query_parameters)
+
+    // Verifies the flashcard was updated
+    if (database_response.rowCount === 0) {
+        sendInternalServerError(req, res, "Unable to update flashcard.")
+        return
+    } else {
+        res.send("Flashcard sucessfully updated.")
+    }
+}
+
 // Whenever this route is called, return all the flashcards
 const readAllFlashcards = async (req, res) => {
 
@@ -46,30 +114,134 @@ const readAllUsersFlashcards = async (req, res) => {
     res.json(database_response.rows)
 }
 
-// Whenever this route is called, return all the flashcard categories
-const readAllFlashcardCategories = async (req, res) => {
+// Whenever this route is called, update a flashcard
+const updateFlashcard = async (req, res) => {
 
-    // Queries the database for all the flashcard categories
-    const database_response = await database_pool.query("SELECT * FROM flashcard_categories ORDER BY id;")
-
-    // The pg module does not parse numerical values when returning a query response so this must be done manually
-    for (const category of database_response.rows) {
-        category.id = parseInt(category.id)
+    // Verifies a user is logged in
+    if (!req.session.user_id) {
+        sendUnauthorized(req, res, "You must be logged in.")
+        return
     }
 
-    // Sends the commands
-    res.send(database_response.rows)
+    // Verifies the user is an admin
+    let query_parameters = [req.session.user_id]
+    let database_response = await database_pool.query("SELECT * FROM users WHERE id = $1 AND role = 'admin' LIMIT 1;", query_parameters)
+    if (database_response.rowCount === 0) {
+        sendForbidden(req, res, "Insufficient permissions.")
+        return
+    }
+
+    // Verifies an id was provided
+    if (req.body.id === undefined) {
+        sendBadRequest(req, res, "No ID provided.")
+        return
+    } else if (typeof req.body.id !== "number") {
+        sendBadRequest(res, `Property 'id' should be of type number, received ${typeof req.body.id} instead`)
+        return
+    }
+
+    // Verifies a word was provided
+    if (req.body.word === undefined) {
+        sendBadRequest(req, res, "No word provided.")
+        return
+    } else if (typeof req.body.word !== "string") {
+        sendBadRequest(res, `Property 'word' should be of type string, received ${typeof req.body.word} instead`)
+        return
+    }
+
+    // Verifies a definition was provided
+    if (req.body.definition === undefined) {
+        sendBadRequest(req, res, "No definition provided.")
+        return
+    } else if (typeof req.body.definition !== "string") {
+        sendBadRequest(res, `Property 'definition' should be of type string, received ${typeof req.body.definition} instead`)
+        return
+    }
+
+    // Verifies a category id was provided
+    if (req.body.category_id === undefined) {
+        sendBadRequest(req, res, "No category ID provided.")
+        return
+    } else if (typeof req.body.definition !== "number") {
+        sendBadRequest(res, `Property 'category_id' should be of type number, received ${typeof req.body.category_id} instead`)
+        return
+    }
+
+    // Verfies the category id is valid
+    query_parameters = [req.body.category_id]
+    database_response = await database_pool.query("SELECT * FROM flashcard_categories WHERE id = $1 LIMIT 1;", query_parameters)
+    if (database_response.rowCount === 0) {
+        sendBadRequest(req, res, `No flashcard cateogry exists with ID ${req.body.category_id}`)
+        return
+    }
+
+    // Updates the flashcard
+    query_parameters = [req.body.category_id, req.body.word, req.body.definition, req.body.id]
+    database_response = await database_pool.query("UPDATE commands SET category_id = $1, word = $2, definition = $3 WHERE id = $4 RETURNING *;", query_parameters)
+
+    // Verifies the flashcard was updated
+    if (database_response.rowCount === 0) {
+        sendInternalServerError(req, res, "Unable to update flashcard.")
+        return
+    } else {
+        res.send("Flashcard sucessfully updated.")
+    }
+}
+
+// Whenever this route is called, delete a flashcard
+const deleteFlashcard = async (req, res) => {
+
+    // Verifies a user is logged in
+    if (!req.session.user_id) {
+        sendUnauthorized(req, res, "You must be logged in.")
+        return
+    }
+
+    // Verifies the user is an admin
+    let query_parameters = [req.session.user_id]
+    let database_response = await database_pool.query("SELECT * FROM users WHERE id = $1 AND role = 'admin' LIMIT 1;", query_parameters)
+    if (database_response.rowCount === 0) {
+        sendForbidden(req, res, "Insufficient permissions.")
+        return
+    }
+
+    // Verifies an id was provided
+    if (req.body.id === undefined) {
+        sendBadRequest(req, res, "No ID provided.")
+        return
+    } else if (typeof req.body.id !== "number") {
+        sendBadRequest(res, `Property 'id' should be of type number, received ${typeof req.body.id} instead`)
+        return
+    }
+
+    // Deletes the flashcard
+    query_parameters = [req.body.id]
+    database_response = await database_pool.query("DELETE FROM flashcards WHERE id = $1 RETURNING *;", query_parameters)
+
+    // Verifies the flashcard was deleted
+    if (database_response.rowCount === 0) {
+        sendInternalServerError(req, res, "Unable to delete flashcard.")
+        return
+    } else {
+        res.send("Flashcard sucessfully deleted.")
+    }
 }
 
 // Exports a function to add all the routes
 const addFlashCardRoutes = (server) => {
 
+    // Whenever this route is called, create a new flashcard
+    server.post("/flashcards", createFlashcard)
+
     // Whenever this route is called, return all the flashcards
     server.get("/flashcards", readAllFlashcards)
 
-    // Whenever this route is called, return all the flashcard categories
-    server.get("/flashcards/categories", readAllFlashcardCategories)
+    // Whenever this route is called, update a flashcard
+    server.put("/flashcards", updateFlashcard)
+    server.patch("/flashcards", updateFlashcard)
 
+    // Whenever this route is called, delete a flashcard
+    server.delete("/flashcards", deleteFlashcard)
 }
 
 export default addFlashCardRoutes

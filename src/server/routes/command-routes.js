@@ -114,7 +114,7 @@ const updateCommand = async (req, res) => {
 
     // Updates the command
     query_parameters = [req.body.command, req.body.description, req.body.id]
-    database_response = await database_pool.query("UPDATE commands SET command = $1, description = $2 WHERE id = $3", query_parameters)
+    database_response = await database_pool.query("UPDATE commands SET command = $1, description = $2 WHERE id = $3 RETURNING *;", query_parameters)
 
     // Verifies the command was updated
     if (database_response.rowCount === 0) {
@@ -154,9 +154,9 @@ const deleteCommand = async (req, res) => {
 
     // Deletes the command
     query_parameters = [req.body.id]
-    database_response = await database_pool.query("DELETE FROM commands WHERE id = $1", query_parameters)
+    database_response = await database_pool.query("DELETE FROM commands WHERE id = $1 RETURNING *", query_parameters)
 
-    // Verifies the command was updates
+    // Verifies the command was deleted
     if (database_response.rowCount === 0) {
         sendInternalServerError(req, res, "Unable to delete command.")
         return
