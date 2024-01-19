@@ -8,7 +8,7 @@ import addMiddleware from "./middleware.js"
 import addSettings from "./settings.js"
 
 // Imports our add routes function
-import addRoutes from "./routes.js"
+import addRoutes from "./routes/routes.js"
 
 // Creates our express server instance
 const server = express()

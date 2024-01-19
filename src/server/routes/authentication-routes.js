@@ -1,5 +1,8 @@
 // Imports our database pool object
-import database_pool from "../database/database.js"
+import database_pool from "../../database/database.js"
+
+// Imports our utility routes
+import { sendBadRequest } from "./utility-routes.js"
 
 // The crytpo module allows us to perform cryptographic functions
 import bcrypt from "bcrypt"
@@ -88,60 +91,8 @@ const loginUser = async (req, res) => {
     })
 }
 
-// Whenever this route is called, return all the commands
-const readAllCommands = async (req, res) => {
-
-    // Queries the database for all the commands
-    const database_response = await database_pool.query("SELECT * FROM commands ORDER BY id;")
-
-    // The pg module does not parse numerical values when returning a query response so this must be done manually
-    for (const command of database_response.rows) {
-        command.id = parseInt(command.id)
-    }
-
-    // Sends the commands
-    res.send(database_response.rows)
-}
-
-// Whenever this route is called, return all the flashcards
-const readAllFlashcards = async (req, res) => {
-
-    // Queries the database for all the flashcards
-    const database_response = await database_pool.query("SELECT * FROM flashcards ORDER BY id;")
-
-    // The pg module does not parse numerical values when returning a query response so this must be done manually
-    for (const flashcard of database_response.rows) {
-        flashcard.id = parseInt(flashcard.id)
-        flashcard.category_id = parseInt(flashcard.category_id)
-    }
-
-    // Sends the commands
-    res.send(database_response.rows)
-}
-
-// Whenever this route is called, return all the flashcard categories
-const readAllFlashcardCategories = async (req, res) => {
-
-    // Queries the database for all the flashcard categories
-    const database_response = await database_pool.query("SELECT * FROM flashcard_categories ORDER BY id;")
-
-    // The pg module does not parse numerical values when returning a query response so this must be done manually
-    for (const category of database_response.rows) {
-        category.id = parseInt(category.id)
-    }
-
-    // Sends the commands
-    res.send(database_response.rows)
-}
-
-// This function is used to send a bad request response
-const sendBadRequest = (req, res, err) => {
-    res.status(400)
-    res.json({ message: err })
-}
-
-// Applies routes to the server instance
-export default (server) => {
+// Exports a function to add all the routes
+const addAuthenticationRoutes = (server) => {
 
     // Whenever this route is called, return a session's CSRF token
     server.get("/csrf-token", getCSRFToken)
@@ -154,13 +105,6 @@ export default (server) => {
 
     // Whenever this route is called, login a user
     server.post("/login", loginUser)
-
-    // Whenever this route is called, return all the commands
-    server.get("/commands", readAllCommands)
-
-    // Whenever this route is called, return all the flashcards
-    server.get("/flashcards", readAllFlashcards)
-
-    // Whenever this route is called, return all the flashcard categories
-    server.get("/flashcards/categories", readAllFlashcardCategories)
 }
+
+export default addAuthenticationRoutes
