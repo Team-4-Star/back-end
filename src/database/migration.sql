@@ -1,8 +1,8 @@
 DROP TABLE IF EXISTS commands;
-DROP TABLE IF EXISTS flashcards;
-DROP TABLE IF EXISTS flashcard_categories;
 DROP TABLE IF EXISTS users_flashcards;
 DROP TABLE IF EXISTS users;
+DROP TABLE IF EXISTS flashcards;
+DROP TABLE IF EXISTS flashcard_categories;
 DROP TABLE IF EXISTS sessions;
 CREATE TABLE commands (
     id BIGSERIAL NOT NULL PRIMARY KEY,
