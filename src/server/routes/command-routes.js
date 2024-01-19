@@ -68,6 +68,104 @@ const readAllCommands = async (req, res) => {
     res.send(database_response.rows)
 }
 
+// Whenever this route is called, update a command
+const updateCommand = async (req, res) => {
+
+    // Verifies a user is logged in
+    if (!req.session.user_id) {
+        sendUnauthorized(req, res, "You must be logged in.")
+        return
+    }
+
+    // Verifies the user is an admin
+    let query_parameters = [req.session.user_id]
+    let database_response = await database_pool.query("SELECT * FROM users WHERE id = $1 AND role = 'admin' LIMIT 1;", query_parameters)
+    if (database_response.rowCount === 0) {
+        sendForbidden(req, res, "Insufficient permissions.")
+        return
+    }
+
+    // Verifies an id was provided
+    if (req.body.id === undefined) {
+        sendBadRequest(req, res, "No ID provided.")
+        return
+    } else if (typeof req.body.id !== "number") {
+        sendBadRequest(res, `Property 'id' should be of type number, received ${typeof req.body.id} instead`)
+        return
+    }
+
+    // Verifies a command was provided
+    if (req.body.command === undefined) {
+        sendBadRequest(req, res, "No command provided.")
+        return
+    } else if (typeof req.body.command !== "string") {
+        sendBadRequest(res, `Property 'command' should be of type string, received ${typeof req.body.command} instead`)
+        return
+    }
+
+    // Verifies a description was passed
+    if (req.body.description === undefined) {
+        sendBadRequest(req, res, "No description provided.")
+        return
+    } else if (typeof req.body.description !== "string") {
+        sendBadRequest(res, `Property 'description' should be of type string, received ${typeof req.body.description} instead`)
+        return
+    }
+
+    // Updates the command
+    query_parameters = [req.body.command, req.body.description, req.body.id]
+    database_response = await database_pool.query("UPDATE commands SET command = $1, description = $2 WHERE id = $3", query_parameters)
+
+    // Verifies the command was updated
+    if (database_response.rowCount === 0) {
+        sendInternalServerError(req, res, "Unable to update command.")
+        return
+    } else {
+        res.send("Command sucessfully updated.")
+    }
+
+}
+
+// Whenever this route is called, delete a command
+const deleteCommand = async (req, res) => {
+
+    // Verifies a user is logged in
+    if (!req.session.user_id) {
+        sendUnauthorized(req, res, "You must be logged in.")
+        return
+    }
+
+    // Verifies the user is an admin
+    let query_parameters = [req.session.user_id]
+    let database_response = await database_pool.query("SELECT * FROM users WHERE id = $1 AND role = 'admin' LIMIT 1;", query_parameters)
+    if (database_response.rowCount === 0) {
+        sendForbidden(req, res, "Insufficient permissions.")
+        return
+    }
+
+    // Verifies an id was provided
+    if (req.body.id === undefined) {
+        sendBadRequest(req, res, "No ID provided.")
+        return
+    } else if (typeof req.body.id !== "number") {
+        sendBadRequest(res, `Property 'id' should be of type number, received ${typeof req.body.id} instead`)
+        return
+    }
+
+    // Deletes the command
+    query_parameters = [req.body.id]
+    database_response = await database_pool.query("DELETE FROM commands WHERE id = $1", query_parameters)
+
+    // Verifies the command was updates
+    if (database_response.rowCount === 0) {
+        sendInternalServerError(req, res, "Unable to delete command.")
+        return
+    } else {
+        res.send("Command sucessfully deleted.")
+    }
+
+}
+
 // Exports a function to add all the routes
 const addCommandRoutes = (server) => {
 
@@ -76,6 +174,13 @@ const addCommandRoutes = (server) => {
 
     // Whenever this route is called, return all the commands
     server.get("/commands", readAllCommands)
+
+    // Whenever this route is called, update a command
+    server.put("/commands", updateCommand)
+    server.patch("/commands", updateCommand)
+
+    // Whenever this route is called, delete a command
+    server.delete("/commands", deleteCommand)
 
 }
 
