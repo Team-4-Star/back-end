@@ -22,7 +22,8 @@ CREATE TABLE flashcards (
 CREATE TABLE users (
     id SERIAL NOT NULL PRIMARY KEY,
     username VARCHAR(255) NOT NULL,
-    password_hash VARCHAR(255) NOT NULL
+    password_hash VARCHAR(255) NOT NULL,
+    role VARCHAR(255) NOT NULl
 );
 CREATE TABLE sessions (
     sid VARCHAR NOT NULL PRIMARY KEY,

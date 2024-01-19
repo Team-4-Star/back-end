@@ -32,6 +32,12 @@ const registerUser = async (req, res) => {
         return
     }
 
+    // Verifies the role was provided
+    if (req.body.role === undefined) {
+        sendBadRequest(req, res, "No role provided.")
+        return
+    }
+
     // Verifies the username passed does not already exists
     let query_options = [req.body.username]
     let database_response = await database_pool.query("SELECT username FROM users WHERE username = $1;", query_options)
@@ -45,8 +51,8 @@ const registerUser = async (req, res) => {
     const password_hash = bcrypt.hashSync(req.body.password, parseInt(process.env.salt_rounds))
 
     // Inserts the user data into the database
-    query_options = [req.body.username, password_hash]
-    database_response = await database_pool.query("INSERT INTO users (username, password_hash) VALUES ($1, $2) RETURNING *;", query_options)
+    query_options = [req.body.username, password_hash, req.body.role]
+    database_response = await database_pool.query("INSERT INTO users (username, password_hash, role) VALUES ($1, $2) RETURNING *;", query_options)
     if (database_response.rowCount === 0) {
         sendBadRequest(req, res, "Unable to register account.")
         return
