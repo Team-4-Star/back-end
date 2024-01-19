@@ -1,6 +1,9 @@
 // Imports our database pool object
 import database_pool from "../database/database.js"
 
+// The process module allows us to interact with the OS process running this application
+import { env } from "process"
+
 // The express module contains many built in middlewares
 import { json } from "express"
 
@@ -25,8 +28,17 @@ export default (server) => {
     // Parses the body of any incoming requests and converts it into an object if the body is a JSON string
     server.use(json())
 
-    // Disables CORS protection
-    server.use(cors())
+    // Allows CORS with the same system and our deployed front-end
+    server.use(cors({
+        origin: (origin, callback) => {
+            const allowedOrigins = [env.front_end_origin]
+            if (!origin || allowedOrigins.includes(origin)) {
+                callback(null, true);
+            } else {
+                callback(new Error("Not allowed by CORS"))
+            }
+        }
+    }))
 
     // Applies a rate limiting of 500 requests per 1 minute window
     server.use(express_rate_limit({
