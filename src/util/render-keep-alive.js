@@ -1,3 +1,6 @@
+// The process module allows us to interact with the OS process running this application
+import { env } from "process"
+
 // This function sends a request to the web application in order to prevent the site from shutting down due to inactivity
 export const renderKeepAlive = () => {
 
