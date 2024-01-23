@@ -69,6 +69,6 @@ export default (server) => {
     }))
 
     // This middleware is used to protect against CSRF attacks
-    server.use(lusca.csrf())
+    // server.use(lusca.csrf())
 
 }

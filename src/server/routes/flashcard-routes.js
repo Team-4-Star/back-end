@@ -43,8 +43,8 @@ const createFlashcard = async (req, res) => {
     if (req.body.category_id === undefined) {
         sendBadRequest(req, res, "No category ID provided.")
         return
-    } else if (typeof req.body.definition !== "number") {
-        sendBadRequest(res, `Property 'category_id' should be of type number, received ${typeof req.body.category_id} instead`)
+    } else if (typeof req.body.category_id !== "number") {
+        sendBadRequest(req, res, `Property 'category_id' should be of type number, received ${typeof req.body.category_id} instead`)
         return
     }
 
@@ -60,13 +60,25 @@ const createFlashcard = async (req, res) => {
     query_parameters = [req.body.word, req.body.definition, req.body.category_id]
     database_response = await database_pool.query("INSERT INTO flashcards (word, definition, category_id) VALUES ($1,$2,$3) RETURNING *;", query_parameters)
 
-    // Verifies the flashcard was updated
+    // Verifies the flashcard was created
     if (database_response.rowCount === 0) {
-        sendInternalServerError(req, res, "Unable to update flashcard.")
+        sendInternalServerError(req, res, "Unable to create flashcard.")
         return
-    } else {
-        res.send("Flashcard sucessfully updated.")
     }
+
+    // Grabs the flashcard
+    const flashcard = database_response.rows[0]
+
+    // Gets an array of all the users
+    database_response = await database_pool.query("SELECT id FROM users;")
+    const users = database_response.rows
+
+    // Goes through each user and adds the newly created flashcard
+    for (let user of users) {
+        query_parameters = [user.id, flashcard.id, flashcard.category_id]
+        database_response = await database_pool.query("INSERT INTO users_flashcards (user_id, flashcard_id, category_id, status) VALUES ($1, $2, $3, 'Needs studying') RETURNING *;", query_options)
+    }
+
 }
 
 // Whenever this route is called, return all the flashcards
