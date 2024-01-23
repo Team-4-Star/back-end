@@ -75,8 +75,8 @@ const registerUser = async (req, res) => {
 
     // The pg module does not parse numerical values when returning a query response so this must be done manually
     for (const flashcard of database_response.rows) {
-        query_options = [user_id, flashcard.id]
-        database_response = await database_pool.query("INSERT INTO users_flashcards (user_id, flashcard_id, status) VALUES ($1, $2, 'Needs studying') RETURNING *;", query_options)
+        query_options = [user_id, flashcard.id, flashcard.category_id]
+        database_response = await database_pool.query("INSERT INTO users_flashcards (user_id, flashcard_id, category_id, status, is_favorite) VALUES ($1, $2, $3, 'Needs studying', false) RETURNING *;", query_options)
     }
 
     // Logs the new user in

@@ -34,5 +34,6 @@ CREATE TABLE users_flashcards (
     id BIGSERIAL NOT NULL PRIMARY KEY,
     user_id BIGSERIAL NOT NULL REFERENCES users(id) ON DELETE CASCADE,
     flashcard_id BIGSERIAL NOT NULL REFERENCES flashcards(id) ON DELETE CASCADE,
-    status TEXT NOT NULL
+    status TEXT NOT NULL,
+    is_favorite BOOLEAN NOT NULL
 );

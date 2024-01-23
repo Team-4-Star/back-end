@@ -76,7 +76,7 @@ const createFlashcard = async (req, res) => {
     // Goes through each user and adds the newly created flashcard
     for (let user of users) {
         query_parameters = [user.id, flashcard.id, flashcard.category_id]
-        database_response = await database_pool.query("INSERT INTO users_flashcards (user_id, flashcard_id, category_id, status) VALUES ($1, $2, $3, 'Needs studying') RETURNING *;", query_options)
+        database_response = await database_pool.query("INSERT INTO users_flashcards (user_id, flashcard_id, category_id, status, is_favorite) VALUES ($1, $2, $3, 'Needs studying', false) RETURNING *;", query_options)
     }
 
 }
