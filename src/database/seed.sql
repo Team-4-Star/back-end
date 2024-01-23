@@ -1,11 +1,39 @@
 INSERT INTO commands (command, description)
 VALUES (
-        'createdb <database_name>',
-        'Create a PostgreSQL database'
+        'psql -h <host> -p <port> -U <username> -d <database_name>',
+        'Connect to a PostgreSQL database using psql client'
     ),
     (
-        'dropdb <database_name>',
-        'Drop a PostgreSQL database'
+        'pg_dump -h <host> -p <port> -U <username> -d <database_name> -f <output_file>',
+        'Dump the contents of a PostgreSQL database to a file'
+    ),
+    (
+        'pg_restore -h <host> -p <port> -U <username> -d <database_name> -f <input_file>',
+        'Restore a PostgreSQL database from a dump file'
+    ),
+    (
+        'create table <table_name> (column1 datatype, column2 datatype, ...);',
+        'Create a new table in a PostgreSQL database'
+    ),
+    (
+        'alter table <table_name> add column <column_name> datatype;',
+        'Add a new column to an existing table in a PostgreSQL database'
+    ),
+    (
+        'drop table <table_name>;',
+        'Drop a table from a PostgreSQL database'
+    ),
+    (
+        'create index <index_name> on <table_name> (column1, column2, ...);',
+        'Create an index on one or more columns of a table in a PostgreSQL database'
+    ),
+    (
+        'grant <privilege> on table <table_name> to <user_or_role>;',
+        'Grant a privilege on a table to a user or role in a PostgreSQL database'
+    ),
+    (
+        'revoke <privilege> on table <table_name> from <user_or_role>;',
+        'Revoke a privilege on a table from a user or role in a PostgreSQL database'
     );
 INSERT INTO flashcard_categories (category)
 VALUES ('React'),
