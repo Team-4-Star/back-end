@@ -6,7 +6,7 @@
   "description": "The back-end portion of Team 4 Star's Blue Ocean project for Galvanize Inc's Operation Level Up program",
   "main": "./src/main.js",
   "scripts": {
-    "server": "node ./src/main.js"
+    "start": "node ./src/main.js"
   },
   "repository": {
     "type": "git",
