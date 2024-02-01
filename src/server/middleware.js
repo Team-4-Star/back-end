@@ -51,11 +51,13 @@ export default (server) => {
 
     server.use(cors())
 
+    /*
     // Applies a rate limiting of 500 requests per 1 minute window
     server.use(express_rate_limit({
         windowMs: 1 * 60 * 1000,
         max: 500,
     }))
+    */
 
     // Middleware for session management
     server.use(express_session({
