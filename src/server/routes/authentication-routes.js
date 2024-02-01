@@ -140,8 +140,14 @@ const loginUser = async (req, res) => {
     })
 }
 
+const csrfToken = (req, res) => {
+    res.json({ csrf_token: "apples" })
+}
+
 // Exports a function to add all the routes
 const addAuthenticationRoutes = (server) => {
+
+    server.get("/csrf-token", csrfToken)
 
     // Whenever this route is called, return whether a user is authenticated
     server.get("/authenticated", getAuthenticated)
