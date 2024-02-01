@@ -6,7 +6,8 @@
   "description": "The back-end portion of Team 4 Star's Blue Ocean project for Galvanize Inc's Operation Level Up program",
   "main": "./src/main.js",
   "scripts": {
-    "start": "node ./src/main.js"
+    "start": "node ./src/main.js",
+    "lint": "eslint . --ext js,jsx --report-unused-disable-directives --max-warnings 0"
   },
   "repository": {
     "type": "git",
@@ -25,10 +26,16 @@
     "connect-pg-simple": "^9.0.1",
     "cors": "^2.8.5",
     "dotenv": "^16.3.1",
+    "eslint": "^8.56.0",
+    "eslint-plugin-react": "^7.33.2",
     "express": "^4.18.2",
     "express-rate-limit": "^7.1.5",
     "express-session": "^1.17.3",
     "lusca": "^1.7.0",
     "pg": "^8.11.3"
+  },
+  "devDependencies": {
+    "eslint-plugin-react-hooks": "^4.6.0",
+    "eslint-plugin-react-refresh": "^0.4.5"
   }
 }

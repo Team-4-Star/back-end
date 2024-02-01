@@ -59,11 +59,11 @@ export default (server) => {
             pool: database_pool,
             tableName: "sessions"
         }),
-        secret: process.env.session_key,
+        secret: env.session_key,
         saveUninitialized: false,
         resave: false,
         cookie: {
-            secure: process.env.secure_cookies === "true",
+            secure: env.secure_cookies === "true",
             sameSite: "Strict"
         }
     }))

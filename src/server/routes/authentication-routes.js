@@ -1,6 +1,9 @@
 // Imports our database pool object
 import database_pool from "../../database/database.js"
 
+// The process module allows us to interact with the OS process running this application
+import { env } from "process"
+
 // Imports our utility routes
 import { sendBadRequest } from "./utility-routes.js"
 
@@ -57,7 +60,7 @@ const registerUser = async (req, res) => {
     }
 
     // Hashes the password
-    const password_hash = bcrypt.hashSync(req.body.password, parseInt(process.env.salt_rounds))
+    const password_hash = bcrypt.hashSync(req.body.password, parseInt(env.salt_rounds))
 
     // Inserts the user data into the database
     query_options = [req.body.username, password_hash, req.body.role]
@@ -130,7 +133,7 @@ const loginUser = async (req, res) => {
     const role = database_response.rows[0].role
 
     // Regenerates the session
-    req.session.regenerate((err) => {
+    req.session.regenerate(() => {
 
         // Sets session variables
         req.session.authenticated = true
