@@ -29,7 +29,7 @@ const registerUser = async (req, res) => {
         sendBadRequest(req, res, "No username provided.")
         return
     } else if (typeof req.body.username !== "string") {
-        sendBadRequest(res, `Property 'username' should be of type string, received ${typeof req.body.username} instead`)
+        sendBadRequest(req, res, `Property 'username' should be of type string, received ${typeof req.body.username} instead`)
         return
     }
 
@@ -47,7 +47,7 @@ const registerUser = async (req, res) => {
         sendBadRequest(req, res, "No role provided.")
         return
     } else if (typeof req.body.role !== "string") {
-        sendBadRequest(res, `Property 'role' should be of type string, received ${typeof req.body.role} instead`)
+        sendBadRequest(req, res, `Property 'role' should be of type string, received ${typeof req.body.role} instead`)
         return
     }
 
