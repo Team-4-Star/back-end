@@ -10,12 +10,6 @@ import { sendBadRequest } from "./utility-routes.js"
 // The crytpo module allows us to perform cryptographic functions
 import bcrypt from "bcrypt"
 
-// Whenever this route is called, return a session's CSRF token
-const getCSRFToken = (req, res) => {
-    //res.json({ csrf_token: req.csrfToken() })
-    res.json({ csrf_token: "" })
-}
-
 // Whenever this route is called, return whether a user is authenticated
 const getAuthenticated = (req, res) => {
     res.json({ authenticated: req.session.authenticated === true })
@@ -148,9 +142,6 @@ const loginUser = async (req, res) => {
 
 // Exports a function to add all the routes
 const addAuthenticationRoutes = (server) => {
-
-    // Whenever this route is called, return a session's CSRF token
-    server.get("/csrf-token", getCSRFToken)
 
     // Whenever this route is called, return whether a user is authenticated
     server.get("/authenticated", getAuthenticated)
