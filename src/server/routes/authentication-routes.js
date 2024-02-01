@@ -12,7 +12,8 @@ import bcrypt from "bcrypt"
 
 // Whenever this route is called, return a session's CSRF token
 const getCSRFToken = (req, res) => {
-    res.json({ csrf_token: req.csrfToken() })
+    //res.json({ csrf_token: req.csrfToken() })
+    res.json({ csrf_token: "" })
 }
 
 // Whenever this route is called, return whether a user is authenticated
