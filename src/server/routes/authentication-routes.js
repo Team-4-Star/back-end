@@ -64,8 +64,8 @@ const registerUser = async (req, res) => {
     const password_hash = bcrypt.hashSync(req.body.password, parseInt(env.salt_rounds))
 
     // Inserts the user data into the database
-    query_options = [req.body.username, password_hash, req.body.role]
-    database_response = await database_pool.query("INSERT INTO users (username, password_hash, role) VALUES ($1, $2, $3) RETURNING *;", query_options)
+    let query_options = [req.body.username, password_hash, req.body.role]
+    let database_response = await database_pool.query("INSERT INTO users (username, password_hash, role) VALUES ($1, $2, $3) RETURNING *;", query_options)
     if (database_response.rowCount === 0) {
         sendBadRequest(req, res, "Unable to register account.")
         return
