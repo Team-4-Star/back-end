@@ -52,13 +52,13 @@ const registerUser = async (req, res) => {
     }
 
     // Verifies the username passed does not already exists
-    let query_options = [req.body.username]
+    /*let query_options = [req.body.username]
     let database_response = await database_pool.query("SELECT username FROM users WHERE username = $1;", query_options)
     if (database_response.rowCount !== 0) {
         res.status(409)
         res.json({ message: `Username ${req.body.username} already exists.` })
         return
-    }
+    }*/
 
     // Hashes the password
     const password_hash = bcrypt.hashSync(req.body.password, parseInt(env.salt_rounds))
